@@ -19,8 +19,8 @@
  *    'Tue, 26 Jan 2016 13:48:02 GMT' => Date()
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
-function parseDataFromRfc2822(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromRfc2822(value) {
+  return Date.parse(value);
 }
 
 /**
@@ -34,8 +34,8 @@ function parseDataFromRfc2822(/* value */) {
  *    '2016-01-19T16:07:37+00:00'    => Date()
  *    '2016-01-19T08:07:37Z' => Date()
  */
-function parseDataFromIso8601(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromIso8601(value) {
+  return new Date(value);
 }
 
 
@@ -53,8 +53,10 @@ function parseDataFromIso8601(/* value */) {
  *    Date(2012,1,1)    => true
  *    Date(2015,1,1)    => false
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const dates = date.getFullYear();
+  const highYear = new Date(dates, 1, 29);
+  return highYear.getDate() === 29;
 }
 
 
@@ -73,8 +75,14 @@ function isLeapYear(/* date */) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
+function timeSpanToString(startDate, endDate) {
+  const time = endDate.getTime() - startDate.getTime();
+  const date = new Date(time);
+  const hour = String(date.getUTCHours()).padStart(2, 0);
+  const min = String(date.getUTCMinutes()).padStart(2, 0);
+  const sec = String(date.getUTCSeconds()).padStart(2, 0);
+  const ms = String(date.getUTCMilliseconds()).padStart(3, 0);
+  return `${hour}:${min}:${sec}.${ms}`;
 }
 
 
@@ -94,8 +102,19 @@ function timeSpanToString(/* startDate, endDate */) {
  *    Date.UTC(2016,3,5,18, 0) => Math.PI
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
-function angleBetweenClockHands(/* date */) {
-  throw new Error('Not implemented');
+function angleBetweenClockHands(date) {
+  let hour = date.getUTCHours();
+  const min = date.getUTCMinutes();
+  if (hour > 11) {
+    hour -= 12;
+  }
+  const radh = (60 * hour + min) / 2;
+  const radm = min * 6;
+  let radbetw = radh - radm;
+  if (radbetw > 180) {
+    radbetw -= 180;
+  }
+  return Math.abs((radbetw * Math.PI) / 180);
 }
 
 
